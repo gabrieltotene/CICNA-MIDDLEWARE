@@ -1,6 +1,9 @@
 """Caso de uso: Processar mensagem recebida."""
+import uuid
 from typing import Dict, Any, Optional
 from datetime import datetime
+
+from ..entities.user import User
 from ..entities.message import Message, MessageType, MessageStatus
 from ..entities.conversation import Conversation, ConversationStatus
 from ..interfaces.messaging_adapter import IMessagingPlatformAdapter
@@ -68,7 +71,6 @@ class ProcessIncomingMessageUseCase:
             
             if not user:
                 # Cria novo usuário (em produção, extrair mais dados do webhook)
-                from ..entities.user import User
                 user = User(
                     id=f"{incoming_message.platform}_{incoming_message.sender_id}",
                     name="Usuário",
@@ -86,7 +88,7 @@ class ProcessIncomingMessageUseCase:
             if not conversation:
                 # Cria nova conversa
                 conversation = Conversation(
-                    id=f"conv_{user.id}_{datetime.now().timestamp()}",
+                    id=f"conv_{uuid.uuid4()}",
                     user_id=user.id,
                     platform=incoming_message.platform,
                     status=ConversationStatus.ACTIVE
@@ -117,7 +119,7 @@ class ProcessIncomingMessageUseCase:
                 
                 # Cria registro da mensagem de resposta
                 response_message = Message(
-                    id=f"msg_{datetime.now().timestamp()}",
+                    id=f"msg_{uuid.uuid4()}",
                     sender_id="system",
                     recipient_id=incoming_message.sender_id,
                     content=response_text,

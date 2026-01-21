@@ -1,1 +1,1 @@
-"""Testes unitários."""
+"""Test suite."""

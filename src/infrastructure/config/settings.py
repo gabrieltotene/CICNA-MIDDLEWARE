@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     # Configurações do WhatsApp
     WHATSAPP_API_TOKEN: str = ""
     WHATSAPP_PHONE_NUMBER_ID: str = ""
-    WHATSAPP_VERIFY_TOKEN: str = "cicna_verify_token"
+    WHATSAPP_VERIFY_TOKEN: str = ""  # Must be set in production
     
     # Configurações do Instagram
     INSTAGRAM_ACCESS_TOKEN: str = ""

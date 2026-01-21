@@ -188,6 +188,7 @@ class WhatsAppAdapter(IMessagingPlatformAdapter):
         Returns:
             bool: True se válido
         """
-        # Validação do webhook do WhatsApp
-        # Em produção, verificar hub.verify_token
-        return True
+        # TODO: Em produção, implementar validação completa
+        # Verificar signature do webhook usando app secret
+        # https://developers.facebook.com/docs/graph-api/webhooks/getting-started#verification-requests
+        return "entry" in request_data and "object" in request_data

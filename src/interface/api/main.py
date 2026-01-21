@@ -22,9 +22,10 @@ def create_app() -> FastAPI:
     )
     
     # Configuração de CORS
+    # IMPORTANTE: Em produção, configurar origens específicas
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # Em produção, configurar origens específicas
+        allow_origins=["*"],  # TODO: Substituir por origens específicas em produção
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

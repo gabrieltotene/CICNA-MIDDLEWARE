@@ -48,8 +48,7 @@ class TypebotService(ITypebotService):
             Dict contendo a resposta do Typebot e session_id
         """
         try:
-            url = f"{self.api_url}/api/v1/typebots/{self.typebot_id}/blocks"
-            
+            # Constrói URL baseado se é nova sessão ou continuação
             if session_id:
                 url = f"{self.api_url}/api/v1/sessions/{session_id}/continueChat"
             else:
@@ -70,11 +69,19 @@ class TypebotService(ITypebotService):
                 if response.status_code == 200:
                     data = response.json()
                     
-                    # Extrai mensagens do Typebot
+                    # Extrai mensagens do Typebot com validação
                     messages = []
-                    for message in data.get("messages", []):
-                        if message.get("type") == "text":
-                            messages.append(message.get("content", {}).get("richText", [{}])[0].get("children", [{}])[0].get("text", ""))
+                    for msg in data.get("messages", []):
+                        if msg.get("type") == "text":
+                            # Acesso seguro aos dados aninhados
+                            content = msg.get("content", {})
+                            rich_text = content.get("richText", [])
+                            if rich_text and len(rich_text) > 0:
+                                children = rich_text[0].get("children", [])
+                                if children and len(children) > 0:
+                                    text = children[0].get("text", "")
+                                    if text:
+                                        messages.append(text)
                     
                     return {
                         "session_id": data.get("sessionId", session_id),
