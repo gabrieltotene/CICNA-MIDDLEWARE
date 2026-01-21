@@ -254,6 +254,7 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 ## 👥 Autores
 
 - **Gabriel Totene** - [GitHub](https://github.com/gabrieltotene)
+- **Lucas Abner** - [GitHub](https://github.com/Lucas-Abner)
 
 ## 🙏 Agradecimentos
 
