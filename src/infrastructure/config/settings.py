@@ -20,11 +20,11 @@ class Settings(BaseSettings):
     # Configurações gerais
     APP_NAME: str = "CICNA Middleware"
     APP_VERSION: str = "0.1.0"
-    DEBUG: bool = False
+    DEBUG: bool = True
     
     # Configurações de servidor
     HOST: str = "0.0.0.0"
-    PORT: int = 8000
+    PORT: int = 8001
     
     # Configurações do Typebot
     TYPEBOT_API_URL: str = "https://typebot.io"
@@ -35,7 +35,12 @@ class Settings(BaseSettings):
     WHATSAPP_API_TOKEN: str = ""
     WHATSAPP_PHONE_NUMBER_ID: str = ""
     WHATSAPP_VERIFY_TOKEN: str = ""  # Must be set in production
-    
+
+    # Configurações do Evolution
+    EVOLUTION_URL: str = "http://localhost:8080"
+    EVOLUTION_API_KEY: str = "dale"
+    EVOLUTION_INSTANCE: str = "lucas"
+
     # Configurações do Instagram
     INSTAGRAM_ACCESS_TOKEN: str = ""
     INSTAGRAM_PAGE_ID: str = ""
