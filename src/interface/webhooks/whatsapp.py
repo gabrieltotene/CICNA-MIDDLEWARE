@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, Query
 from typing import Dict, Any
 import httpx
 
-from src.infrastructure.adapters.whatsapp import WhatsAppAdapter
+from src.infrastructure.adapters.whatsapp import EvolutionWhatsAppAdapter
 from src.application.services.typebot_service import TypebotService
 from src.infrastructure.repositories.in_memory import (
     InMemoryMessageRepository,
@@ -20,7 +20,7 @@ settings = get_settings()
 
 def get_whatsapp_use_case() -> ProcessIncomingMessageUseCase:
     """Factory para criar o caso de uso com dependências."""
-    adapter = WhatsAppAdapter(
+    adapter = EvolutionWhatsAppAdapter(
         evolution_url=settings.EVOLUTION_URL,
         api_key=settings.EVOLUTION_API_KEY,
         instance=settings.EVOLUTION_INSTANCE
@@ -68,10 +68,12 @@ async def whatsapp_webhook(request: Request):
         #     print(body)
 
         body = await request.json()
+        print("Received WhatsApp webhook:", body)
         # Verifica se é uma notificação de mensagem
         if body.get("event") == "messages.upsert":
             use_case = get_whatsapp_use_case()
             result = await use_case.execute(body)
+            print("Processed WhatsApp message:", result)
             
             return {"success": True, "result": result}
         

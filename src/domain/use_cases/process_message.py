@@ -84,6 +84,8 @@ class ProcessIncomingMessageUseCase:
                 user.id,
                 incoming_message.platform
             )
+
+            print("Active conversation:", conversation)
             
             if not conversation:
                 # Cria nova conversa
@@ -103,7 +105,9 @@ class ProcessIncomingMessageUseCase:
                 message=incoming_message.content,
                 user_id=user.id
             )
-            
+
+            print("Typebot response:", typebot_response)
+
             # Atualiza session_id se necessário
             if typebot_response.get("session_id"):
                 conversation.typebot_session_id = typebot_response["session_id"]

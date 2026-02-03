@@ -57,7 +57,7 @@ class TypebotService(ITypebotService):
             payload = {
                 "message": message,
             }
-            
+
             if not session_id:
                 payload["prefilledVariables"] = {
                     "userId": user_id
@@ -68,7 +68,7 @@ class TypebotService(ITypebotService):
                 
                 if response.status_code == 200:
                     data = response.json()
-                    
+                    print("Typebot response data:", data)
                     # Extrai mensagens do Typebot com validação
                     messages = []
                     for msg in data.get("messages", []):
@@ -82,7 +82,15 @@ class TypebotService(ITypebotService):
                                     text = children[0].get("text", "")
                                     if text:
                                         messages.append(text)
-                    
+                    if data.get("input")["type"] == "choice input":
+                        items = data.get("input")["items"]
+                        print("Choice input items:", items)
+                        # for item in items:
+                        #     messages.append(f"{item.get('content', '')}")
+                        messages.append(items)
+
+                    print("Extracted messages from Typebot:", messages)
+
                     return {
                         "session_id": data.get("sessionId", session_id),
                         "messages": messages,

@@ -1,4 +1,4 @@
 """Adaptador WhatsApp."""
-from .adapter import WhatsAppAdapter
+from .adapter import EvolutionWhatsAppAdapter
 
-__all__ = ["WhatsAppAdapter"]
+__all__ = ["EvolutionWhatsAppAdapter"]

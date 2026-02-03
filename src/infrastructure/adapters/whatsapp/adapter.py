@@ -7,7 +7,7 @@ from src.domain.interfaces.messaging_adapter import IMessagingPlatformAdapter
 from src.domain.entities.message import Message, MessageType, MessageStatus
 
 
-class WhatsAppAdapter(IMessagingPlatformAdapter):
+class EvolutionWhatsAppAdapter(IMessagingPlatformAdapter):
     """
     Adaptador para WhatsApp Business API.
     

@@ -27,9 +27,9 @@ class Settings(BaseSettings):
     PORT: int = 8001
     
     # Configurações do Typebot
-    TYPEBOT_API_URL: str = "https://typebot.io"
-    TYPEBOT_ID: str = ""
-    TYPEBOT_API_TOKEN: str = ""
+    TYPEBOT_API_URL: str = "http://10.0.2.78:3001"
+    TYPEBOT_ID: str = "teste"
+    TYPEBOT_API_TOKEN: str = "BKj63rRdbJGRhXqf7IGpIYct"
     
     # Configurações do WhatsApp
     WHATSAPP_API_TOKEN: str = ""
