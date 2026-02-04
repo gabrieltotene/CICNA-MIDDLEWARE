@@ -67,8 +67,12 @@ class EvolutionWhatsAppAdapter(IMessagingPlatformAdapter):
             remote_jid = key.get("remoteJid")
             message_content = data.get("message", {})
 
-            content = (message_content.get("conversation") or
-                       message_content.get("extendedTextMessage", {}).get("text"))
+            button_response = message_content.get("buttonResponseMessage")
+            if button_response:
+                content = button_response.get('selectedButtonId')
+            else:
+                content = (message_content.get("conversation") or
+                        message_content.get("extendedTextMessage", {}).get("text"))
             
             if not content:
                 return None
@@ -105,10 +109,11 @@ class EvolutionWhatsAppAdapter(IMessagingPlatformAdapter):
             bool: True se enviado com sucesso
         """
         try:
+
             url = f"{self.evolution_url}/message/sendText/{self.instance}"
             
             payload = {
-                "number" : recipient_id,
+                "number": recipient_id,
                 "options" : {"delay": 1200, "preview_url": True},
                 "text" : text
             }
@@ -131,8 +136,54 @@ class EvolutionWhatsAppAdapter(IMessagingPlatformAdapter):
         Returns:
             bool: True se enviado com sucesso
         """
-        return await self.send_text(recipient_id, f"{text}\n\nOpções: {", ".join(buttons) if buttons else ''}")
-    
+        try:
+            print(f"Enviando mensagem interativa para {recipient_id} com texto: {text} e botões: {buttons}")
+
+            clean_number = recipient_id.replace("@s.whatsapp.net", "").replace("@c.us", "")
+            url = f"{self.evolution_url}/message/sendList/{self.instance}"
+            print(f"URL de envio: {url}")
+
+            formatted_buttons = []
+            for btn in buttons[:3]:
+                formatted_buttons.append({
+                    "title": btn["reply"]["title"],
+                    "rowId": btn["reply"]["id"],
+                    "description" : btn["reply"]["title"]
+                })
+
+            print(f"Botões formatados: {formatted_buttons}")
+
+            payload = {
+                "number": recipient_id,
+                "title": "Menu de Opções",
+                "description" : text,
+                "buttonText" : "Selecione uma opção",
+                "footerText":"Powered by CICNA",
+                "sections": [
+                    {
+                        "title": "Opções disponíveis",
+                        "rows": formatted_buttons
+                    }
+                ]
+            }
+
+            print(f"Payload de envio: {payload}")
+
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, json=payload, headers=self.headers, timeout=30.0)
+                
+                print(f"\n=== RESPOSTA DA API ===")
+                print(f"Status Code: {response.status_code}")
+                print(f"Response Body: {response.text}")
+                print(f"Response Headers: {dict(response.headers)}")
+                
+                success = response.status_code in [200, 201]
+                print(f"Considerado sucesso: {success}")
+                return success
+        except Exception as e:
+            print(f"Erro ao enviar mensagem interativa: {e}")
+            return await self.send_text(recipient_id, text)
+
     def get_platform_name(self) -> str:
         """Retorna o nome da plataforma."""
         return "whatsapp"

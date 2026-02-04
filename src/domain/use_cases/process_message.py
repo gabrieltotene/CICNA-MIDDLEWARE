@@ -114,20 +114,47 @@ class ProcessIncomingMessageUseCase:
                 await self.conversation_repository.save(conversation)
             
             # 5. Envia resposta ao usuário
+                        # 5. Envia resposta ao usuário
             responses_sent = []
-            for response_text in typebot_response.get("messages", []):
-                success = await self.messaging_adapter.send_text(
-                    incoming_message.sender_id,
-                    response_text
-                )
+            messages = typebot_response.get("messages", [])
+            buttons = typebot_response.get("buttons", [])
+            
+            print(f"\n=== PREPARANDO PARA ENVIAR RESPOSTAS ===")
+            print(f"Total de mensagens: {len(messages)}")
+            print(f"Botões disponíveis: {buttons}")
+            
+            for i, response_text in enumerate(messages):
+                # Verifica se é a última mensagem
+                is_last_message = (i == len(messages) - 1)
                 
+                print(f"\n--- Mensagem {i+1}/{len(messages)} ---")
+                print(f"É última mensagem: {is_last_message}")
+                print(f"Tem botões: {bool(buttons)}")
+                
+                # Envia com botões se houver e for a última mensagem
+                if buttons and is_last_message:
+                    print(f"🔘 Enviando mensagem COM BOTÕES")
+                    success = await self.messaging_adapter.send_interactive_message(
+                        recipient_id=incoming_message.sender_id,
+                        text=response_text,
+                        buttons=buttons
+                    )
+                    print(f"Resultado do envio: {success}")
+                else:
+                    print(f"💬 Enviando mensagem de TEXTO simples")
+                    success = await self.messaging_adapter.send_text(
+                        incoming_message.sender_id,
+                        response_text
+                    )
+                    print(f"Resultado do envio: {success}")
+
                 # Cria registro da mensagem de resposta
                 response_message = Message(
                     id=f"msg_{uuid.uuid4()}",
                     sender_id="system",
                     recipient_id=incoming_message.sender_id,
                     content=response_text,
-                    message_type=MessageType.TEXT,
+                    message_type=MessageType.INTERACTIVE if is_last_message and buttons else MessageType.TEXT,
                     platform=incoming_message.platform,
                     timestamp=datetime.now(),
                     status=MessageStatus.SENT if success else MessageStatus.FAILED

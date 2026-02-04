@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     PORT: int = 8001
     
     # Configurações do Typebot
-    TYPEBOT_API_URL: str = "http://10.0.2.78:3001"
+    TYPEBOT_API_URL: str = "http://10.0.2.217:3001"
     TYPEBOT_ID: str = "teste"
     TYPEBOT_API_TOKEN: str = "BKj63rRdbJGRhXqf7IGpIYct"
     

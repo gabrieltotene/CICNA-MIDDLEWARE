@@ -3,6 +3,7 @@ from typing import Optional, Dict, Any
 import httpx
 
 from src.domain.interfaces.typebot_service import ITypebotService
+from src.domain.entities.message import Message, MessageType, MessageStatus
 
 
 class TypebotService(ITypebotService):
@@ -82,20 +83,36 @@ class TypebotService(ITypebotService):
                                     text = children[0].get("text", "")
                                     if text:
                                         messages.append(text)
+
+                    botoes_whatsapp = []
                     if data.get("input")["type"] == "choice input":
-                        items = data.get("input")["items"]
-                        print("Choice input items:", items)
-                        # for item in items:
-                        #     messages.append(f"{item.get('content', '')}")
-                        messages.append(items)
+                        for i, item in enumerate(data.get("input", {})["items"]):
+                            if i >= 3: break
+
+                            botoes = {
+                                "type": "reply",
+                                "reply": {
+                                    "id": item["id"],
+                                    "title": item["content"]
+                                }
+                            }
+                            botoes_whatsapp.append(botoes)
 
                     print("Extracted messages from Typebot:", messages)
 
-                    return {
-                        "session_id": data.get("sessionId", session_id),
-                        "messages": messages,
-                        "success": True
-                    }
+                    if botoes_whatsapp:
+                        return {
+                            "session_id": data.get("sessionId", session_id),
+                            "messages": messages,
+                            "buttons": botoes_whatsapp,
+                            "success": True
+                        }
+                    else:
+                        return {
+                            "session_id": data.get("sessionId", session_id),
+                            "messages": messages,
+                            "success": True
+                        }
                 else:
                     return {
                         "session_id": session_id,
